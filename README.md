@@ -10,8 +10,8 @@ Ensure you have the following installed on your system:
 ## 1. Clone the Repository
 
 ```sh
-git clone https://github.com/your-username/your-fastapi-project.git
-cd your-fastapi-project
+git clone https://github.com/jaycode8/Safe-Ride.git
+cd Safe-Ride
 ```
 
 ## 2. Create and Activate a Virtual Environment
