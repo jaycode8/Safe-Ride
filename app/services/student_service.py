@@ -8,9 +8,16 @@ from app.schemas.student import StudentCreate, StudentUpdate
 
 def get_students(db: Session, skip: int = 0, limit: int = 100) -> List[Student]:
     """
-    Get a list of students
+    Get a list of students filtered by parent_id
     """
     return db.query(Student).offset(skip).limit(limit).all()
+
+def get_students_by_parent(db: Session, parent_id: int, skip: int = 0, limit: int = 100) -> List[Student]:
+    """
+    Get a list of students filtered by parent_id
+    """
+    return db.query(Student).filter(Student.parent_id == parent_id).offset(skip).limit(limit).all()
+
 
 def get_student(db: Session, stud_id: int) -> Optional[Student]:
     """

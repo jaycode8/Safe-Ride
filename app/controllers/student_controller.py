@@ -9,18 +9,19 @@ from app.models.student import Student
 from app.schemas.student import StudentCreate, StudentUpdate
 from app.services.student_service import get_student, create_stud_by_admin, update_student
 from app.services.user_service import get_parents
+from app.utils.security import get_current_user
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
 @router.get("/student/create")
-async def stud_create_form(request: Request, db: Session = Depends(get_db)):
+async def stud_create_form(request: Request, db: Session = Depends(get_db), current_user: str = Depends(get_current_user)):
     parents = get_parents(db)
     return templates.TemplateResponse(
         "student_form.html", 
         {
             "request": request,
-            "current_user": "current_user",
+            "current_user": current_user,
             "is_new": True,
             "parents": parents
         }
@@ -43,7 +44,7 @@ async def create_stud(request: Request, full_name: str = Form(...), adm_no: str 
     )
 
 @router.get("/student/{student_id}/edit")
-async def student_edit_form(request: Request, student_id: int, db: Session = Depends(get_db)):
+async def student_edit_form(request: Request, student_id: int, db: Session = Depends(get_db), current_user: str = Depends(get_current_user)):
     student = get_student(db, student_id)
     parents = get_parents(db)
     
@@ -51,7 +52,7 @@ async def student_edit_form(request: Request, student_id: int, db: Session = Dep
         "student_form.html", 
         {
             "request": request,
-            "current_user": "current_user",
+            "current_user": current_user,
             "student": student,
             "parents": parents,
             "is_new": False

@@ -4,6 +4,9 @@
 
 {% block content %}
 <div class="flex min-h-[calc(100vh-16rem)] items-center justify-center">
+    {% if error %}
+        <h3 class="absolute top-10 right-10 bg-red-200 text-red-700 py-1 px-3 rounded-sm">{{error}}</h3>
+    {% endif %}
     <div class="w-full max-w-md">
         <div class="bg-white py-8 px-6 shadow-md rounded-lg">
             <h2 class="mb-6 text-center text-3xl font-extrabold text-gray-900">
@@ -16,7 +19,7 @@
                     </label>
                     <div class="mt-1">
                         <input id="email" name="email" type="email" autocomplete="email" required
-                            class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value="{{email}}">
                     </div>
                 </div>
 

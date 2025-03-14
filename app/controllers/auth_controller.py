@@ -24,20 +24,14 @@ async def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
 @router.post("/login")
-async def login(
-    request: Request,
-    response: Response,
-    email: str = Form(...),
-    password: str = Form(...),
-    db: Session = Depends(get_db)
-):
+async def login(request: Request, response: Response, email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
     """Authenticate user and set session token"""
     user = authenticate_user(db, email, password)
     
     if not user:
         return templates.TemplateResponse(
             "login.html",
-            {"request": request, "error": "Invalid email or password"},
+            {"request": request, "error": "Invalid email or password", "email": email},
             status_code=status.HTTP_401_UNAUTHORIZED,
         )
 
@@ -60,7 +54,7 @@ async def login(
     
     return response
 
-@router.get("/logout")
+@router.post("/logout")
 async def logout():
     """Handle user logout by clearing session cookie"""
     response = RedirectResponse(url="/login", status_code=303)

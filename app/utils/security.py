@@ -4,6 +4,10 @@ from fastapi import Depends, HTTPException, Request
 from jose import JWTError, jwt
 from app.config import settings
 from fastapi.responses import RedirectResponse
+from app.models.user import User
+from sqlalchemy.orm import Session
+from typing import Optional
+from app.db.session import get_db
 
 SECRET_KEY = "your_secret_key_here"  # Use the same secret key
 ALGORITHM = "HS256"
@@ -18,7 +22,10 @@ def get_password_hash(password: str) -> str:
     """Generate password hash from plain password"""
     return pwd_context.hash(password)
 
-async def get_current_user(request: Request):
+def get_user_by_email(db: Session, email: str) -> Optional[User]:
+    return db.query(User).filter(User.email == email).first()
+
+async def get_current_user(request: Request, db: Session = Depends(get_db)):
     """Get the current logged-in user from the session token"""
     token = request.cookies.get("session")
 
@@ -42,7 +49,9 @@ async def get_current_user(request: Request):
                 status_code=status.HTTP_401_UNAUTHORIZED
             )
         
-        return email  # Returning email, you can fetch full user from DB if needed
+        current_user = get_user_by_email(db, email)
+        
+        return current_user
 
     except JWTError:
         return RedirectResponse(

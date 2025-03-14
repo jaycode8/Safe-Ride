@@ -8,9 +8,7 @@ from app.db.session import get_db
 from app.models.user import User, UserRole
 from app.schemas.user import UserCreate
 from app.services.user_service import get_users, get_user, create_user_by_admin, update_user, deactivate_user, activate_user
-from app.services.student_service import get_students
-
-# from app.utils.security import get_admin_user, verify_password, create_access_token
+from app.services.student_service import get_students, get_students_by_parent
 from app.utils.security import get_current_user
 
 # Initialize router and templates
@@ -18,39 +16,35 @@ router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
 @router.get("/dashboard")
-async def dashboard(request: Request, db: Session = Depends(get_db), user_email: str = Depends(get_current_user)):
-    # If user is admin, show all users
-    users = get_users(db)
-    students = get_students(db)
-    # if current_user.role == UserRole.ADMIN:
-    # else:
-    #     users = [current_user]
-    print(user_email)
-    return templates.TemplateResponse(
-        "dashboard.html", 
-        {
-            "request": request, 
-            "current_user": "jay",
-            "users": users,
-            "students": students
-        }
-    )
-    # return templates.TemplateResponse(
-    #     "parents_dashboard.html", 
-    #     {
-    #         "request": request,
-    #         "current_user": "jay",
-    #         "children": students
-    #     }
-    # )
+async def dashboard(request: Request, db: Session = Depends(get_db), current_user: str = Depends(get_current_user)):
+    if current_user.role.value == "ADMIN":
+        users = get_users(db)
+        return templates.TemplateResponse(
+            "dashboard.html", 
+            {
+                "request": request, 
+                "current_user": current_user,
+                "users": users,
+            }
+        )
+    else:
+        students = get_students_by_parent(db, current_user.id)
+        return templates.TemplateResponse(
+            "parents_dashboard.html", 
+            {
+                "request": request,
+                "current_user": current_user,
+                "children": students
+            }
+        )
 
 @router.get("/user/create")
-async def user_create_form(request: Request):
+async def user_create_form(request: Request, current_user: str = Depends(get_current_user)):
     return templates.TemplateResponse(
         "user_form.html", 
         {
             "request": request,
-            "current_user": "current_user",
+            "current_user": current_user,
             "roles": UserRole,
             "is_new": True
         }
@@ -73,14 +67,14 @@ async def create_user(request: Request, email: str = Form(...), password: str = 
     )
 
 @router.get("/user/{user_id}/edit")
-async def user_edit_form(request: Request, user_id: int, db: Session = Depends(get_db)):
+async def user_edit_form(request: Request, user_id: int, db: Session = Depends(get_db), current_user: str = Depends(get_current_user)):
     user = get_user(db, user_id)
     
     return templates.TemplateResponse(
         "user_form.html", 
         {
             "request": request,
-            "current_user": "current_user",
+            "current_user": current_user,
             "user": user,
             "roles": UserRole,
             "is_new": False
