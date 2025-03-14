@@ -7,25 +7,25 @@ from typing import Optional
 from app.db.session import get_db
 from app.models.user import User, UserRole
 from app.schemas.user import UserCreate
-from app.services.user_service import get_users, get_user, create_user_by_admin, update_user, deactivate_user
+from app.services.user_service import get_users, get_user, create_user_by_admin, update_user, deactivate_user, activate_user
 from app.services.student_service import get_students
 
 # from app.utils.security import get_admin_user, verify_password, create_access_token
-# from app.utils.auth import get_current_user
+from app.utils.security import get_current_user
 
 # Initialize router and templates
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
 @router.get("/dashboard")
-async def dashboard(request: Request, db: Session = Depends(get_db)):
+async def dashboard(request: Request, db: Session = Depends(get_db), user_email: str = Depends(get_current_user)):
     # If user is admin, show all users
     users = get_users(db)
     students = get_students(db)
     # if current_user.role == UserRole.ADMIN:
     # else:
     #     users = [current_user]
-    
+    print(user_email)
     return templates.TemplateResponse(
         "dashboard.html", 
         {
@@ -88,12 +88,11 @@ async def user_edit_form(request: Request, user_id: int, db: Session = Depends(g
     )
 
 @router.post("/user/{user_id}/edit")
-async def edit_user(request: Request, user_id: int, email: str = Form(...), first_name: Optional[str] = Form(None), last_name: Optional[str] = Form(None), is_active: bool = Form(True), db: Session = Depends(get_db)):
+async def edit_user(request: Request, user_id: int, email: str = Form(...), first_name: Optional[str] = Form(None), last_name: Optional[str] = Form(None), db: Session = Depends(get_db)):
     user_data = {
         "email": email,
         "first_name": first_name,
-        "last_name": last_name,
-        "is_active": is_active
+        "last_name": last_name
     }
     
     update_user(db, user_id, user_data)
@@ -109,5 +108,14 @@ async def deactivate_user_route(user_id: int, db: Session = Depends(get_db)):
     
     return RedirectResponse(
         url="/dashboard", 
+        status_code=status.HTTP_303_SEE_OTHER
+    )
+
+@router.post("/user/{user_id}/activate")
+async def activate_user_route(user_id: int, db: Session = Depends(get_db)):
+    activate_user(db, user_id)
+    
+    return RedirectResponse(
+        url="/dashboard",
         status_code=status.HTTP_303_SEE_OTHER
     )

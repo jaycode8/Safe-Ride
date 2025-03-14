@@ -1,9 +1,10 @@
 import logging
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from fastapi.responses import RedirectResponse
 
 from app.config import settings
 from app.db.base import Base, engine
@@ -41,6 +42,12 @@ app.include_router(student_controller.router)
 
 # Initialize templates
 templates = Jinja2Templates(directory="app/templates")
+
+@app.exception_handler(HTTPException)
+async def custom_http_exception_handler(request, exc):
+    if exc.status_code == 401:
+        return RedirectResponse(url="/login")
+    return RedirectResponse(url="/error")
 
 @app.on_event("startup")
 async def startup_event():

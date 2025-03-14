@@ -46,7 +46,7 @@
                     required>
             </div>
         </div>
-        <div>
+        <div class="relative">
             <label for="parent_id" class="block text-sm font-medium text-gray-700">
                 Select Parent
             </label>
@@ -55,7 +55,7 @@
                     <option value="">Select Parent</option>
                     {% for parent in parents %}
                         <option value="{{ parent.id }}" {% if not is_new %}{% if student.parent_id == parent.id %}selected{% endif %}{% endif %}>
-                            {{ parent.full_name }} ({{ parent.email }})
+                            {{ parent.first_name }} {{ parent.last_name }} - {{ parent.email }}
                         </option>
                     {% endfor %}
                 </select>

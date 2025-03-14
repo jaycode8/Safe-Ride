@@ -28,7 +28,7 @@ def update_student(db: Session, stud_id: int, stud_data: StudentUpdate) -> Stude
     """
     Update a student's information
     """
-    stud = get_stud(db, stud_id)
+    stud = get_student(db, stud_id)
     
     if not stud:
         raise HTTPException(

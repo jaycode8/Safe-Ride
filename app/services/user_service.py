@@ -70,6 +70,25 @@ def deactivate_user(db: Session, user_id: int) -> User:
     
     return user
 
+def activate_user(db: Session, user_id: int) -> User:
+    """
+    Activate a user account
+    """
+    user = get_user(db, user_id)
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    user.is_active = True
+    db.commit()
+    db.refresh(user)
+    
+    return user
+
+
 def create_user_by_admin(db: Session, user_data: UserCreate) -> User:
     """
     Create a new user by admin

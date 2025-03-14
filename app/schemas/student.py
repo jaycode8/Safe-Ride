@@ -17,6 +17,7 @@ class StudentUpdate(BaseModel):
     full_name: Optional[str] = None
     adm_no: Optional[str] = None
     level: Optional[str] = None
+    parent_id: Optional[int] = None
     
 class StudentInDB(StudentBase):
     """Schema for Student information retrieved from the database"""

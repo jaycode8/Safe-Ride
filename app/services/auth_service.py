@@ -1,5 +1,6 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import Optional
+from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 
@@ -7,6 +8,10 @@ from app.models.user import User, UserRole
 from app.schemas.user import UserCreate
 from app.utils.security import verify_password, get_password_hash
 from app.config import settings
+
+SECRET_KEY = "your_secret_key_here"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 def authenticate_user(db: Session, email: str, password: str) -> Optional[User]:
     """
@@ -21,6 +26,15 @@ def authenticate_user(db: Session, email: str, password: str) -> Optional[User]:
         return user
     
     return None
+
+def create_session_token(data: dict, expires_delta: timedelta):
+    """Create a JWT session token with an expiry time"""
+    to_encode = data.copy()
+    expire = datetime.utcnow() + expires_delta
+    to_encode.update({"exp": expire})
+    
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
 
 def create_user(db: Session, user_data: UserCreate, is_admin: bool = False) -> User:
     """
