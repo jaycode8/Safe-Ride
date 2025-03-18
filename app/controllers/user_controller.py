@@ -15,9 +15,14 @@ from app.utils.security import get_current_user
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
+@router.get("/")
+async def root(request: Request, current_user: str = Depends(get_current_user)):
+    return RedirectResponse(url="/dashboard")
+
 @router.get("/dashboard")
 async def dashboard(request: Request, db: Session = Depends(get_db), current_user: str = Depends(get_current_user)):
     if current_user.role.value == "ADMIN":
+        students = get_students(db)
         users = get_users(db)
         return templates.TemplateResponse(
             "dashboard.html", 
@@ -25,6 +30,7 @@ async def dashboard(request: Request, db: Session = Depends(get_db), current_use
                 "request": request, 
                 "current_user": current_user,
                 "users": users,
+                "students": students
             }
         )
     else:

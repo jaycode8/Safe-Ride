@@ -10,7 +10,7 @@ from app.config import settings
 from app.db.base import Base, engine
 from app.db.session import get_db
 from app.services.auth_service import create_admin_user
-from app.controllers import auth_controller, user_controller, student_controller
+from app.controllers import auth_controller, user_controller, student_controller, detection_controller
 
 # Configure logging
 logging.basicConfig(
@@ -29,9 +29,6 @@ app = FastAPI(
     debug=settings.DEBUG
 )
 
-# Add authentication middleware
-# app.add_middleware(AuthMiddleware)
-
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -39,6 +36,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(auth_controller.router)
 app.include_router(user_controller.router)
 app.include_router(student_controller.router)
+app.include_router(detection_controller.router)
 
 # Initialize templates
 templates = Jinja2Templates(directory="app/templates")
@@ -68,9 +66,6 @@ async def startup_event():
     except Exception as e:
         logger.error(f"Startup error: {e}")
 
-@app.get("/")
-async def root(request: Request):
-    return {"name":"hey there"}
 
 if __name__ == "__main__":
     import uvicorn
