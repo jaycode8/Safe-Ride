@@ -16,6 +16,7 @@ class Student(Base):
     adm_no = Column(String(255), nullable=False)
     parent_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     parent = relationship("User", back_populates="children", lazy="joined")
+    left_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
     

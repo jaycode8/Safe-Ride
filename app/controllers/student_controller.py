@@ -67,7 +67,6 @@ async def edit_user(request: Request, student_id: int, full_name: str = Form(...
         level=level,
         parent_id=parent_id
     )
-    print(stud_data)
     update_student(db, student_id, stud_data)
 
     return RedirectResponse(

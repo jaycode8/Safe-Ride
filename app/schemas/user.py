@@ -16,7 +16,7 @@ class UserCreate(UserBase):
     @field_validator('password')
     def password_must_be_strong(cls, v):
         """Validate password strength"""
-        if len(v) < 8:
+        if len(v) < 5:
             raise ValueError('Password must be at least 8 characters long')
         return v
 

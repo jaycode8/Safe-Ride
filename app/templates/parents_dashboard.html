@@ -25,7 +25,7 @@
                         <div class="ml-4">
                             <p class="text-lg font-medium text-gray-900">{{ child.full_name }}</p>
                             <p class="text-sm text-gray-500">{{ child.level }}</p>
-                            <p class="text-sm text-gray-500">Left at 1700HRS Monday</p>
+                            <p id="formatted-time" data-left-at="{{ child.left_at or '' }}" class="text-sm text-gray-500"></p>
                         </div>
                     </div>
                 </div>
@@ -57,6 +57,29 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const timeElements = document.querySelectorAll("[data-left-at]");
+
+        timeElements.forEach((timeElement) => {
+            const leftAtRaw = timeElement.getAttribute("data-left-at");
+            console.log(leftAtRaw)
+            if (leftAtRaw) {
+                const leftAtDate = new Date(leftAtRaw);
+                
+                const hours = String(leftAtDate.getHours()).padStart(2, '0');
+                const minutes = String(leftAtDate.getMinutes()).padStart(2, '0');
+                const formattedTime = `${hours}${minutes}HRS`;
+
+                const options = { weekday: 'long' };
+                const weekday = leftAtDate.toLocaleDateString('en-US', options);
+
+                timeElement.innerText = `${formattedTime} ${weekday}`;
+            }
+        });
+    });
+</script>
 
 <script>
     function openModal(admNo, fullName, level) {
