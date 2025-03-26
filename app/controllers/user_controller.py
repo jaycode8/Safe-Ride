@@ -58,12 +58,7 @@ async def user_create_form(request: Request, current_user: str = Depends(get_cur
 
 @router.post("/user/create")
 async def create_user(request: Request, email: str = Form(...), password: str = Form(...), first_name: Optional[str] = Form(None), last_name: Optional[str] = Form(None), db: Session = Depends(get_db)):
-    user_data = UserCreate(
-        email=email,
-        password=password,
-        first_name=first_name,
-        last_name=last_name,
-    )
+    user_data = UserCreate( email=email, password=password, first_name=first_name, last_name=last_name)
     
     create_user_by_admin(db, user_data)
     
@@ -71,6 +66,15 @@ async def create_user(request: Request, email: str = Form(...), password: str = 
         url="/dashboard", 
         status_code=status.HTTP_303_SEE_OTHER
     )
+
+# @router.post("/user/create")
+# async def create_user(user_data: UserCreate, db: Session = Depends(get_db)):
+#     create_user_by_admin(db, user_data)
+    
+#     return RedirectResponse(
+#         url="/dashboard", 
+#         status_code=status.HTTP_303_SEE_OTHER
+#     )
 
 @router.get("/user/{user_id}/edit")
 async def user_edit_form(request: Request, user_id: int, db: Session = Depends(get_db), current_user: str = Depends(get_current_user)):
