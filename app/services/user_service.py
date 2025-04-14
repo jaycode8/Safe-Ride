@@ -106,6 +106,7 @@ def create_user_by_admin(db: Session, user_data: UserCreate) -> User:
         hashed_password=hashed_password,
         first_name=user_data.first_name,
         last_name=user_data.last_name,
+        phone=user_data.phone
     )
     
     db.add(db_user)

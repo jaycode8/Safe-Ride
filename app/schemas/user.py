@@ -12,7 +12,8 @@ class UserCreate(UserBase):
     password: str
     first_name: Optional[str] = None
     last_name: Optional[str] = None
-    
+    phone: Optional[str] = None
+
     @field_validator('password')
     def password_must_be_strong(cls, v):
         """Validate password strength"""
@@ -25,6 +26,7 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
+    phone: Optional[str] = None
     is_active: Optional[bool] = None
     
 class UserInDB(UserBase):
@@ -32,6 +34,7 @@ class UserInDB(UserBase):
     id: int
     first_name: Optional[str] = None
     last_name: Optional[str] = None
+    phone: Optional[str] = None
     is_active: bool
     role: UserRole
     created_at: datetime

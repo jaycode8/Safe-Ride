@@ -57,6 +57,7 @@ def create_user(db: Session, user_data: UserCreate, is_admin: bool = False) -> U
         hashed_password=get_password_hash(user_data.password),
         first_name=user_data.first_name,
         last_name=user_data.last_name,
+        phone = user_data.phone,
         role=UserRole.ADMIN if is_admin else user_data.role
     )
     
@@ -85,6 +86,7 @@ def create_admin_user(db: Session) -> User:
         password=settings.ADMIN_PASSWORD,
         first_name="Admin",
         last_name="User",
+        phone=settings.ADMIN_PHONE,
         role=UserRole.ADMIN
     )
     

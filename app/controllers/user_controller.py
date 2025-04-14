@@ -57,11 +57,11 @@ async def user_create_form(request: Request, current_user: str = Depends(get_cur
     )
 
 @router.post("/user/create")
-async def create_user(request: Request, email: str = Form(...), password: str = Form(...), first_name: Optional[str] = Form(None), last_name: Optional[str] = Form(None), db: Session = Depends(get_db)):
-    user_data = UserCreate( email=email, password=password, first_name=first_name, last_name=last_name)
+async def create_user(request: Request, email: str = Form(...), phone: str = Form(...), password: str = Form(...), first_name: Optional[str] = Form(None), last_name: Optional[str] = Form(None), db: Session = Depends(get_db)):
+    user_data = UserCreate( email=email, phone=phone, password=password, first_name=first_name, last_name=last_name)
     
     create_user_by_admin(db, user_data)
-    
+    # print(user_data)
     return RedirectResponse(
         url="/dashboard", 
         status_code=status.HTTP_303_SEE_OTHER

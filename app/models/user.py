@@ -20,6 +20,7 @@ class User(Base):
     hashed_password = Column(String(255), nullable=False)
     first_name = Column(String(255), nullable=True)
     last_name = Column(String(255), nullable=True)
+    phone = Column(String(15), nullable=True)
     is_active = Column(Boolean, default=True)
     role = Column(Enum(UserRole), nullable=False, default=UserRole.USER)
     children = relationship("Student", back_populates="parent", cascade="all, delete-orphan", lazy="joined")
